@@ -120,19 +120,22 @@ class Obstacles(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         
-        self.image = random.choice(obs)
+        self.image = random.choice(obs)  # chooses obstacle image at random
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.bottomleft = (WIDTH + random.randrange(1, 880), 570)
         self.pos = VEC(WIDTH + random.randrange(1, 880), 570)
 
     def update(self):
-        self.onscreen = []
         self.pos.x -= SPEED
-        if self.pos.x < WIDTH:
-            self.onscreen.append(self.image)
+        
+        if self.pos.x < -200:  # removes obstacle after it leaves the screen
+            self.kill()
+            SPEED + 0.5 # not yet working
+
+            #print(SPEED)
         self.rect.bottomleft = self.pos
-        print(self.onscreen)
+        
 
 
 

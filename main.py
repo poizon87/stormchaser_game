@@ -35,11 +35,7 @@ class Game:
             f = Floor(*floor)
             self.all_sprites.add(f)
             self.all_floors.add(f)
-        for item in obs:
-            item = Obstacles()
-            self.obstacles.add(item)
 
-        
         self.run()
 
 
@@ -63,6 +59,11 @@ class Game:
         self.all_floors.update()
         self.background_one.update()
         self.background_two.update()
+        while len(self.obstacles) < SPAWN_STAGE:
+            
+            ob = Obstacles()
+            self.obstacles.add(ob)
+
         self.obstacles.update()
         # checks if player hits platform # only if falling
         if self.chaser.vel.y > 0:
@@ -71,6 +72,7 @@ class Game:
                 self.chaser.pos.y = hits[0].rect.top
                 self.chaser.vel.y = 0
                 self.chaser.rect.midbottom = self.chaser.pos
+        
         
     def draw(self):
         # game loop draw

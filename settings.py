@@ -21,8 +21,8 @@ BGX2 = BG.get_width()
 
 FPS = 60
 VEL = 5
-SPEED = 1
-GAME_STAGE = 1
+SPEED = 2
+SPAWN_STAGE = 2 * SPEED
 
 
 CLOUD_ACC = 1
