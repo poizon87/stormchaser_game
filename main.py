@@ -23,17 +23,18 @@ class Game:
         self.bg1 = pygame.sprite.Group()
         self.bg2 = pygame.sprite.Group()
         self.obstacles = pygame.sprite.Group()
+        self.l_strikes = pygame.sprite.Group()
         self.background_one = Background_one()
         self.background_two = Background_two()
         self.bg1.add(self.background_one)
         self.bg2.add(self.background_two)
-        self.cloud = Cloud()
+        self.cloud = Cloud(self)
         self.chaser = Chaser(self)
         self.all_sprites.add(self.cloud)
         self.all_sprites.add(self.chaser)
         for floor in FLOOR_LIST:
             f = Floor(*floor)
-            self.all_sprites.add(f)
+            #self.all_sprites.add(f)
             self.all_floors.add(f)
 
         self.run()
@@ -59,19 +60,24 @@ class Game:
         self.all_floors.update()
         self.background_one.update()
         self.background_two.update()
+        self.l_strikes.update()
         while len(self.obstacles) < SPAWN_STAGE:
-            
             ob = Obstacles()
             self.obstacles.add(ob)
-
         self.obstacles.update()
         # checks if player hits platform # only if falling
         if self.chaser.vel.y > 0:
-            hits = pygame.sprite.spritecollide(self.chaser, self.all_floors, False)
-            if hits:
-                self.chaser.pos.y = hits[0].rect.top
+            floor_hits = pygame.sprite.spritecollide(self.chaser, self.all_floors, False)
+            if floor_hits:
+                self.chaser.pos.y = floor_hits[0].rect.top
                 self.chaser.vel.y = 0
                 self.chaser.rect.midbottom = self.chaser.pos
+        
+        
+        ob_hits = pygame.sprite.spritecollide(self.chaser, self.obstacles, False, pygame.sprite.collide_circle)
+        if ob_hits:
+            self.playing = False
+            self.running = False
         
         
     def draw(self):
@@ -81,6 +87,7 @@ class Game:
         self.bg2.draw(self.WINDOW)
         self.all_sprites.draw(self.WINDOW) # draws all sprites in group
         self.obstacles.draw(self.WINDOW)
+        self.l_strikes.draw(self.WINDOW)
         pygame.display.flip() # double buffering / after drawing everything
 
 
@@ -94,6 +101,8 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.chaser.jump()
+                if event.key == pygame.K_DOWN:
+                    self.cloud.bolt()
 
 
 

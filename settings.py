@@ -15,14 +15,14 @@ MIDNIGHT = 12, 6, 40
 
 BG = pygame.image.load(os.path.join('assets', 'first_background.png'))
 
-BGX = 0
-BGX2 = BG.get_width()
 
 
 FPS = 60
 VEL = 5
 SPEED = 2
 SPAWN_STAGE = 2 * SPEED
+
+TOTAL_HITS = []
 
 
 CLOUD_ACC = 1
@@ -39,6 +39,8 @@ pygame.display.set_caption("Stormchaser")
 FLOOR_LIST = [(0, 570, WIDTH, HEIGHT - 570),(WIDTH + 1, 570, WIDTH, HEIGHT - 570)]
 
 obs = [pygame.image.load(os.path.join('assets', 'cow1.png')).convert(), pygame.image.load(os.path.join('assets', 'tree_obstacle1.png')).convert(), pygame.image.load(os.path.join('assets', 'rock_obstacle1.png')).convert(), pygame.image.load(os.path.join('assets', 't_stone_obstacle.png')).convert()]
+
+L_BOLT1 = pygame.image.load(os.path.join('assets', 'lightningbolt_1.png')).convert()
 
 PLAYER_CHASER = pygame.image.load(os.path.join('assets', 'alien_chaser.png'))
 CHASER = pygame.transform.scale(PLAYER_CHASER, (CHASER_WIDTH, CHASER_HEIGHT))
