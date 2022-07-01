@@ -18,6 +18,7 @@ class Game:
 
     def new(self):
         # start new game
+        
         self.all_sprites = pygame.sprite.Group() # groups all sprites in pygame program
         self.all_floors = pygame.sprite.Group()
         self.bg1 = pygame.sprite.Group()
@@ -42,6 +43,7 @@ class Game:
 
 
     def run(self):
+        
         # game loop
         
         self.playing = True
@@ -88,6 +90,7 @@ class Game:
         self.all_sprites.draw(self.WINDOW) # draws all sprites in group
         self.obstacles.draw(self.WINDOW)
         self.l_strikes.draw(self.WINDOW)
+        scoreboard(WINDOW, str(self.cloud.score), 25, 50, 680)
         pygame.display.flip() # double buffering / after drawing everything
 
 
@@ -103,6 +106,7 @@ class Game:
                     self.chaser.jump()
                 if event.key == pygame.K_DOWN:
                     self.cloud.bolt()
+                    self.cloud.score -= 10
 
 
 

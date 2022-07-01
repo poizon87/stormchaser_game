@@ -6,7 +6,7 @@ VEC = pygame.math.Vector2
 game_folder = os.path.dirname(__file__) # game directory so will run on any computer
 img_folder = os.path.join(game_folder, "assets") # joins game folder and assets folder so that images will load
 
-k_list = []
+
 
 class Cloud(pygame.sprite.Sprite):
     def __init__(self, game):
@@ -21,6 +21,7 @@ class Cloud(pygame.sprite.Sprite):
         self.pos = VEC(WIDTH / 2, 40)
         self.vel = VEC(0, 0)
         self.acc = VEC(0, 0)
+        self.score = 0
 
     def bolt(self):
         strike = Lightning(self.rect.centerx,self.rect.centery)
@@ -42,11 +43,12 @@ class Cloud(pygame.sprite.Sprite):
         if self.pos.x < 0:
             self.pos.x = WIDTH
         self.rect.center = self.pos
-
-        strike_hits = pygame.sprite.groupcollide(self.game.l_strikes, self.game.obstacles, True, True)
+        
+        strike_hits = pygame.sprite.groupcollide(self.game.l_strikes, self.game.obstacles, True, True, pygame.sprite.collide_mask)
         for hit in strike_hits:
-            TOTAL_HITS.append(hit)
-            print(len(TOTAL_HITS))
+            self.score += 20
+            #TOTAL_HITS.append(hit)
+            #print(len(TOTAL_HITS))
 
 
 
@@ -57,6 +59,9 @@ class Lightning(pygame.sprite.Sprite):
         self.image = L_BOLT1
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        #self.radius = 5
+        #pygame.draw.circle(self.image, RED, (self.rect.width / 2, self.rect.height - 30), self.radius)
         self.rect.top = y
         self.rect.centerx = x
         self.pos = VEC(self.rect.centerx, self.rect.bottom)
@@ -67,7 +72,7 @@ class Lightning(pygame.sprite.Sprite):
         #self.rect.y += self.bolt_speed
         self.pos.y = self.rect.y
         if self.pos.y <= 590:
-            #k_list.append(self)
+            
             self.kill()
             #print(k_list)
         
@@ -129,9 +134,10 @@ class Background_one(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = (0, 0)
         self.pos = VEC(0, 0)
+        self.speed = 2
 
     def update(self):
-        self.pos.x -= SPEED
+        self.pos.x -= self.speed
         if self.pos.x < (BG.get_width() * -1):
             self.pos.x = BG.get_width()
         self.rect.topleft = self.pos
@@ -144,28 +150,31 @@ class Background_two(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = (WIDTH, 0)
         self.pos = VEC(WIDTH, 0)
+        self.speed = 2
 
     def update(self):
-        self.pos.x -= SPEED
+        self.pos.x -= self.speed
         if self.pos.x < (BG.get_width() * -1):
             self.pos.x = BG.get_width()
         self.rect.topleft = self.pos
 
 class Obstacles(pygame.sprite.Sprite):
-    def __init__(self,):
+    def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         
         self.image = random.choice(obs)  # chooses obstacle image at random
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.radius = int(self.rect.height / 2.5)
+        self.mask = pygame.mask.from_surface(self.image)
         #pygame.draw.circle(self.image, RED, self.rect.center, self.radius)
         
         self.rect.bottomleft = (WIDTH + random.randrange(1, 880), 570)
         self.pos = VEC(WIDTH + random.randrange(1, 880), 570)
+        self.speed = 2
 
     def update(self):
-        self.pos.x -= SPEED
+        self.pos.x -= self.speed
         
         if self.pos.x < -200:  # removes obstacle after it leaves the screen
             self.kill()
@@ -174,6 +183,11 @@ class Obstacles(pygame.sprite.Sprite):
             #print(SPEED)
         self.rect.bottomleft = self.pos
         
-
-
+font_name = pygame.font.match_font('arial')
+def scoreboard(surf, text, size, x, y):
+    font = pygame.font.Font(font_name, size)
+    text_surface = font.render(text, True, GREEN)
+    text_rect = text_surface.get_rect()
+    text_rect.topleft = (x, y)
+    surf.blit(text_surface, text_rect)
 
