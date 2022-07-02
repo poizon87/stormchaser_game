@@ -45,12 +45,12 @@ class Cloud(pygame.sprite.Sprite):
             self.pos.x = WIDTH
         self.rect.center = self.pos
         
+        # checks if lightning bolts hit obstacles and removes obstacles that are hit
         strike_hits = pygame.sprite.groupcollide(self.game.l_strikes, self.game.obstacles, True, True, pygame.sprite.collide_mask)
         for hit in strike_hits:
             self.score += 50
             self.game.prev_score = self.score
-            #TOTAL_HITS.append(hit)
-            print(self.game.prev_score)
+            #print(self.game.prev_score)
 
 
 
@@ -62,8 +62,6 @@ class Lightning(pygame.sprite.Sprite):
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
-        #self.radius = 5
-        #pygame.draw.circle(self.image, RED, (self.rect.width / 2, self.rect.height - 30), self.radius)
         self.rect.top = y
         self.rect.centerx = x
         self.pos = VEC(self.rect.centerx, self.rect.bottom)
@@ -192,11 +190,25 @@ class Obstacles(pygame.sprite.Sprite):
         
         if self.pos.x < -200:  # removes obstacle after it leaves the screen
             self.kill()
-            #SPEED + 0.5 # not yet working
-
-        #print(self.game_speed)
         self.rect.bottomleft = self.pos
-        
+
+class Start(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = START_SCREEN
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (0, 0)
+
+class Over(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = GAME_OVER
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (0, 0)
+
+
+
+# scoreboard class and variable
 font_name = pygame.font.match_font('arial')
 def scoreboard(surf, text, size, x, y):
     font = pygame.font.Font(font_name, size)
@@ -205,11 +217,4 @@ def scoreboard(surf, text, size, x, y):
     text_rect.topleft = (x, y)
     surf.blit(text_surface, text_rect)
 
-#def speedup():
-    #score = Cloud(self).score
-    #if 100 >= score >= 300:
-        #game_speed + 3
-    #elif 301 >= score >= 600:
-        #game_speed + 7
-    
 

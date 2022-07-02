@@ -26,8 +26,11 @@ class Game:
         self.bg2 = pygame.sprite.Group()
         self.obstacles = pygame.sprite.Group()
         self.l_strikes = pygame.sprite.Group()
+        
         self.background_one = Background_one(self)
         self.background_two = Background_two(self)
+        
+        
         self.bg1.add(self.background_one)
         self.bg2.add(self.background_two)
         self.cloud = Cloud(self)
@@ -64,7 +67,7 @@ class Game:
         self.background_one.update()
         self.background_two.update()
         self.l_strikes.update()
-        while len(self.obstacles) < SPAWN_STAGE:
+        while len(self.obstacles) < SPAWN_STAGE:  # spawns limited number of obstacles 
             ob = Obstacles(self)
             self.obstacles.add(ob)
         self.obstacles.update()
@@ -77,7 +80,7 @@ class Game:
                 self.chaser.vel.y = 0
                 self.chaser.rect.midbottom = self.chaser.pos
         
-        
+        # checks if player collides with obstacles and ends game if true
         ob_hits = pygame.sprite.spritecollide(self.chaser, self.obstacles, False, pygame.sprite.collide_circle)
         if ob_hits:
             self.playing = False
@@ -92,7 +95,7 @@ class Game:
         self.all_sprites.draw(self.WINDOW) # draws all sprites in group
         self.obstacles.draw(self.WINDOW)
         self.l_strikes.draw(self.WINDOW)
-        scoreboard(WINDOW, str(self.cloud.score), 25, 50, 680)
+        scoreboard(WINDOW, F"{'Score: ' + str(self.cloud.score)}", 25, 50, 680)
         pygame.display.flip() # double buffering / after drawing everything
 
 
@@ -109,7 +112,7 @@ class Game:
                     self.chaser.jump()
                 if event.key == pygame.K_DOWN:
                     self.cloud.bolt()
-                    self.cloud.score -= 10
+                    self.cloud.score -= 10 # removes 10 points for each lightning bolt
                     #self.prev_score -= 10
 
 
@@ -120,11 +123,42 @@ class Game:
 
     def show_start_screen(self):
         # game start screen
-        pass
+        self.start = pygame.sprite.Group()
+        self.s_screen = Start()
+        self.start.add(self.s_screen)
+        self.start.draw(self.WINDOW)
+        #self.draw_text("A and D move player SPACE to jump\nArrows move cloud DOWN to shoot lightning", 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        #self.draw_text("Press a key to play", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        pygame.display.flip()
+        self.wait_for_key()
+
 
     def show_game_over(self):
         # game over screen
-        pass
+        #if self.running == False:
+            #return
+        self.over = pygame.sprite.Group()
+        self.g_o = Over()
+        self.over.add(self.g_o)
+        self.over.draw(self.WINDOW)
+        scoreboard(WINDOW, F"{'Score: ' + str(self.cloud.score)}", 42, WIDTH / 2 - 80, 220)
+        pygame.display.flip()
+        self.wait_for_key()
+        
+        
+
+
+    def wait_for_key(self):
+        waiting = True
+        while waiting:
+            self.clock.tick(30)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    waiting = False
+                    self.running = False
+                if event.type == pygame.KEYUP:
+                    waiting = False
+                    self.running = True
 
 
 g = Game()
@@ -133,5 +167,6 @@ while g.running:
     
     g.new()
     g.show_game_over()
+
 
 pygame.quit()

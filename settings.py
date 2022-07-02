@@ -13,7 +13,6 @@ CLOUD_WIDTH, CLOUD_HEIGHT = 160, 120
 FLOOR_HEIGHT = 580
 MIDNIGHT = 12, 6, 40
 
-BG = pygame.image.load(os.path.join('assets', 'first_background.png'))
 
 
 
@@ -35,6 +34,10 @@ FLOOR = pygame.image.load(os.path.join('assets', 'floor1.png'))
 FLOOR_BORDER = pygame.transform.scale(FLOOR,(WIDTH, HEIGHT - FLOOR_HEIGHT))
 WINDOW = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption("Stormchaser")
+
+BG = pygame.image.load(os.path.join('assets', 'first_background.png')).convert()
+START_SCREEN = pygame.image.load(os.path.join('assets', 'storm_title.png')).convert()
+GAME_OVER = pygame.image.load(os.path.join('assets', 'storm_go.png')).convert()
 
 FLOOR_LIST = [(0, 570, WIDTH, HEIGHT - 570),(WIDTH + 1, 570, WIDTH, HEIGHT - 570)]
 
