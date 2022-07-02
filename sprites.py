@@ -8,6 +8,7 @@ img_folder = os.path.join(game_folder, "assets") # joins game folder and assets 
 
 
 
+
 class Cloud(pygame.sprite.Sprite):
     def __init__(self, game):
         pygame.sprite.Sprite.__init__(self)
@@ -46,9 +47,10 @@ class Cloud(pygame.sprite.Sprite):
         
         strike_hits = pygame.sprite.groupcollide(self.game.l_strikes, self.game.obstacles, True, True, pygame.sprite.collide_mask)
         for hit in strike_hits:
-            self.score += 20
+            self.score += 50
+            self.game.prev_score = self.score
             #TOTAL_HITS.append(hit)
-            #print(len(TOTAL_HITS))
+            print(self.game.prev_score)
 
 
 
@@ -128,40 +130,49 @@ class Floor(pygame.sprite.Sprite):
         self.rect.y = y
 
 class Background_one(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, game):
         pygame.sprite.Sprite.__init__(self)
+        self.game = game
         self.image = pygame.image.load(os.path.join('assets', 'first_background.png')).convert()
         self.rect = self.image.get_rect()
         self.rect.topleft = (0, 0)
         self.pos = VEC(0, 0)
-        self.speed = 2
+        self.speed = 2 #+ (self.game.prev_score * 0.05)
+        
 
     def update(self):
-        self.pos.x -= self.speed
+        if self.game.prev_score >= 400:
+            self.speed = (self.game.prev_score * 0.005)
+        self.pos.x -= self.speed 
         if self.pos.x < (BG.get_width() * -1):
             self.pos.x = BG.get_width()
         self.rect.topleft = self.pos
 
 
 class Background_two(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, game):
         pygame.sprite.Sprite.__init__(self)
+        self.game = game
         self.image = pygame.image.load(os.path.join('assets', 'first_background.png')).convert()
         self.rect = self.image.get_rect()
         self.rect.topleft = (WIDTH, 0)
         self.pos = VEC(WIDTH, 0)
-        self.speed = 2
+        self.speed = 2 #+ (self.game.prev_score * 0.05)
+        
+
 
     def update(self):
+        if self.game.prev_score >= 400:
+            self.speed = (self.game.prev_score * 0.005)
         self.pos.x -= self.speed
         if self.pos.x < (BG.get_width() * -1):
             self.pos.x = BG.get_width()
         self.rect.topleft = self.pos
 
 class Obstacles(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, game):
         pygame.sprite.Sprite.__init__(self)
-        
+        self.game = game
         self.image = random.choice(obs)  # chooses obstacle image at random
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
@@ -169,18 +180,21 @@ class Obstacles(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         #pygame.draw.circle(self.image, RED, self.rect.center, self.radius)
         
-        self.rect.bottomleft = (WIDTH + random.randrange(1, 880), 570)
-        self.pos = VEC(WIDTH + random.randrange(1, 880), 570)
-        self.speed = 2
+        self.rect.bottomleft = (WIDTH + random.randrange(1, 1200), 570)
+        self.pos = VEC(WIDTH + random.randrange(1, 1200), 570)
+        self.speed = 2 #+ (self.game.prev_score * 0.05)
+        
 
     def update(self):
-        self.pos.x -= self.speed
+        if self.game.prev_score >= 400:
+            self.speed = (self.game.prev_score * 0.005)
+        self.pos.x -= self.speed 
         
         if self.pos.x < -200:  # removes obstacle after it leaves the screen
             self.kill()
             #SPEED + 0.5 # not yet working
 
-            #print(SPEED)
+        #print(self.game_speed)
         self.rect.bottomleft = self.pos
         
 font_name = pygame.font.match_font('arial')
@@ -190,4 +204,12 @@ def scoreboard(surf, text, size, x, y):
     text_rect = text_surface.get_rect()
     text_rect.topleft = (x, y)
     surf.blit(text_surface, text_rect)
+
+#def speedup():
+    #score = Cloud(self).score
+    #if 100 >= score >= 300:
+        #game_speed + 3
+    #elif 301 >= score >= 600:
+        #game_speed + 7
+    
 

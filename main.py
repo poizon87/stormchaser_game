@@ -5,6 +5,7 @@ BG = pygame.image.load(os.path.join('assets', 'first_background.png')).convert()
 BG2 = pygame.image.load(os.path.join('assets', 'first_background.png')).convert()
 
 
+
 class Game:
     def __init__(self):
         # initialize game window, etc
@@ -18,15 +19,15 @@ class Game:
 
     def new(self):
         # start new game
-        
+        self.prev_score = 0
         self.all_sprites = pygame.sprite.Group() # groups all sprites in pygame program
         self.all_floors = pygame.sprite.Group()
         self.bg1 = pygame.sprite.Group()
         self.bg2 = pygame.sprite.Group()
         self.obstacles = pygame.sprite.Group()
         self.l_strikes = pygame.sprite.Group()
-        self.background_one = Background_one()
-        self.background_two = Background_two()
+        self.background_one = Background_one(self)
+        self.background_two = Background_two(self)
         self.bg1.add(self.background_one)
         self.bg2.add(self.background_two)
         self.cloud = Cloud(self)
@@ -37,7 +38,7 @@ class Game:
             f = Floor(*floor)
             #self.all_sprites.add(f)
             self.all_floors.add(f)
-
+        
         self.run()
 
 
@@ -49,7 +50,7 @@ class Game:
         self.playing = True
         while self.playing:
             self.clock.tick(FPS)
-            
+
             self.events()
             self.draw()
             self.update()
@@ -64,9 +65,10 @@ class Game:
         self.background_two.update()
         self.l_strikes.update()
         while len(self.obstacles) < SPAWN_STAGE:
-            ob = Obstacles()
+            ob = Obstacles(self)
             self.obstacles.add(ob)
         self.obstacles.update()
+        
         # checks if player hits platform # only if falling
         if self.chaser.vel.y > 0:
             floor_hits = pygame.sprite.spritecollide(self.chaser, self.all_floors, False)
@@ -95,6 +97,7 @@ class Game:
 
 
     def events(self):
+
         # game loop events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -107,6 +110,7 @@ class Game:
                 if event.key == pygame.K_DOWN:
                     self.cloud.bolt()
                     self.cloud.score -= 10
+                    #self.prev_score -= 10
 
 
 

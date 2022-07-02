@@ -49,4 +49,3 @@ CLOUD = pygame.transform.scale(PLAYER_CLOUD, (CLOUD_WIDTH, CLOUD_HEIGHT))
 pchaser = pygame.Rect(90, 500, CHASER_WIDTH, CHASER_HEIGHT)
 pcloud = pygame.Rect(410, 15, CLOUD_WIDTH, CLOUD_HEIGHT)
 
-game_speed = 0
