@@ -1,5 +1,6 @@
 from settings import *
 from sprites import *
+from os import path
 
 BG = pygame.image.load(os.path.join('assets', 'first_background.png')).convert()
 BG2 = pygame.image.load(os.path.join('assets', 'first_background.png')).convert()
@@ -15,7 +16,19 @@ class Game:
         pygame.display.set_caption("Stormchaser")
         self.clock = pygame.time.Clock()
         self.running = True
-        
+        self.load_data()
+
+    def load_data(self):
+        # load high score
+        self.dir = path.dirname(__file__)
+        try:
+            #try to read the file
+            with open(path.join(self.dir, HS_FILE), 'r+') as f:
+                self.highscore = int(f.read())
+        except:
+            #create the file
+            with open(path.join(self.dir, HS_FILE), 'w'):
+                self.highscore = 0
 
     def new(self):
         # start new game
@@ -38,9 +51,9 @@ class Game:
         self.all_sprites.add(self.cloud)
         self.all_sprites.add(self.chaser)
         for floor in FLOOR_LIST:
-            f = Floor(*floor)
+            fl = Floor(*floor)
             #self.all_sprites.add(f)
-            self.all_floors.add(f)
+            self.all_floors.add(fl)
         
         self.run()
 
@@ -81,7 +94,7 @@ class Game:
                 self.chaser.rect.midbottom = self.chaser.pos
         
         # checks if player collides with obstacles and ends game if true
-        ob_hits = pygame.sprite.spritecollide(self.chaser, self.obstacles, False, pygame.sprite.collide_circle)
+        ob_hits = pygame.sprite.spritecollide(self.chaser, self.obstacles, False, pygame.sprite.collide_mask)
         if ob_hits:
             self.playing = False
             self.running = False
@@ -95,7 +108,7 @@ class Game:
         self.all_sprites.draw(self.WINDOW) # draws all sprites in group
         self.obstacles.draw(self.WINDOW)
         self.l_strikes.draw(self.WINDOW)
-        scoreboard(WINDOW, F"{'Score: ' + str(self.cloud.score)}", 25, 50, 680)
+        scoreboard(WINDOW, F"{'Score: ' + str(self.cloud.score)}   {'Highscore: ' + str(self.highscore)}", 25, 50, 680)
         pygame.display.flip() # double buffering / after drawing everything
 
 
@@ -141,7 +154,13 @@ class Game:
         self.g_o = Over()
         self.over.add(self.g_o)
         self.over.draw(self.WINDOW)
-        scoreboard(WINDOW, F"{'Score: ' + str(self.cloud.score)}", 42, WIDTH / 2 - 80, 220)
+        if self.cloud.score > self.highscore:
+            self.highscore = self.cloud.score
+            scoreboard(WINDOW, F"{'New Highscore!: ' + str(self.highscore)}", 42, WIDTH / 2 - 160, 220)
+            with open(path.join(self.dir, HS_FILE), 'w') as f:
+                f.write(str(self.cloud.score))
+        else:
+            scoreboard(WINDOW, F"{'Score: ' + str(self.cloud.score)}   {'Highscore: ' + str(self.highscore)}", 42, WIDTH / 2 - 280, 220)
         pygame.display.flip()
         self.wait_for_key()
         

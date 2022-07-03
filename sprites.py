@@ -86,6 +86,7 @@ class Chaser(pygame.sprite.Sprite):
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.radius = 25
+        self.mask = pygame.mask.from_surface(self.image)
         #pygame.draw.circle(self.image, RED, self.rect.center, self.radius)
         self.rect.midbottom = (20, 570)
         self.pos = VEC(20 , 570)
